@@ -36,15 +36,6 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
 @package
     NSString *_type;
     NSMutableArray *_subcomponents;
-    /**
-     *  Layout
-     */
-    css_node_t *_cssNode;
-    BOOL _isLayoutDirty;
-    CGRect _calculatedFrame;
-    CGPoint _absolutePosition;
-    WXPositionType _positionType;
-    
     
     //Transition
     WXTransition *_transition;
@@ -99,6 +90,8 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
     BOOL _listenHorizontalPan;
     BOOL _listenVerticalPan;
     
+    BOOL _listenStopPropagation;
+    NSString *_stopPropagationName;
     WXTouchGestureRecognizer* _touchGesture;
     
     /**
@@ -147,6 +140,8 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
     NSString *_repeatIndexIdentify;
     NSString *_repeatLabelIdentify;
     NSString *_virtualComponentId;// for recycleList subcomponent
+    NSMutableDictionary *_virtualElementInfo;
+
     BOOL _isRepeating;
     BOOL _isSkipUpdate;
     BOOL _dataBindOnce;
@@ -158,6 +153,11 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
     
     NSMutableDictionary<NSString *, NSArray *> *_eventParameters;
 }
+
+/* _transform may be modified in mutiple threads. DO NOT use "_transform = XXX" directly.
+ Ivar access in ObjC is compiled to code with additional release or retain. So use Ivar in mutiple
+ thread may lead to crash. Use an ATOMIC property is well enough. */
+@property (atomic, strong) WXTransform *transform;
 
 ///--------------------------------------
 /// @name Package Internal Methods
@@ -210,6 +210,8 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
 
 - (void)_initCSSNodeWithStyles:(NSDictionary *)styles;
 
+- (void)_initFlexCssNodeWithStyles:(NSDictionary *)styles;
+
 - (void)_updateCSSNodeStyles:(NSDictionary *)styles;
 
 - (void)_resetCSSNodeStyles:(NSArray *)styles;
@@ -257,6 +259,12 @@ typedef id (^WXDataBindingBlock)(NSDictionary *data, BOOL *needUpdate);
 - (void)_storeBindingsWithProps:(NSDictionary *)props styles:(NSDictionary *)styles attributes:(NSDictionary *)attributes events:(NSDictionary *)events;
 
 - (void)_didInserted;
+
+- (void)attachSlotEvent:(NSDictionary *)data;
+
+- (void)detachSlotEvent:(NSDictionary *)data;
+
+- (void)_buildViewHierarchyLazily;
 
 @end
 

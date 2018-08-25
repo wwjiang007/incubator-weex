@@ -18,9 +18,12 @@
  */
 package com.taobao.weex.bridge;
 
+import com.taobao.weex.utils.WXLogUtils;
+
+import java.io.Serializable;
 import java.util.Map;
 
-public class WXParams {
+public class WXParams implements Serializable {
 
   private String platform;
   private String osVersion;
@@ -34,6 +37,9 @@ public class WXParams {
   private String logLevel;
   private String needInitV8;
   private String cacheDir;
+  private String useSingleProcess;
+  private String crashFilePath;
+  private String libJssPath;
 
   private Map<String, String> options;
 
@@ -139,6 +145,15 @@ public class WXParams {
     return logLevel;
   }
 
+  public String getUseSingleProcess() {
+    WXLogUtils.e("getUseSingleProcess is running " + useSingleProcess);
+    return useSingleProcess;
+  }
+
+  public void setUseSingleProcess(String useSingleProcess) {
+    this.useSingleProcess = useSingleProcess;
+  }
+
   public void setLogLevel(String logLevel) {
     this.logLevel = logLevel;
   }
@@ -156,5 +171,24 @@ public class WXParams {
     } else {
       this.needInitV8 = "0";
     }
+  }
+
+  public void setCrashFilePath(String crashFilePath) {
+    WXLogUtils.e("WXParams","setCrashFilePath: " + crashFilePath);
+    this.crashFilePath = crashFilePath;
+  }
+
+  public String getCrashFilePath() {
+    WXLogUtils.e("WXParams", "getCrashFilePath:" + crashFilePath);
+    return this.crashFilePath;
+  }
+
+  public String getLibJssPath() {
+    WXLogUtils.e("getLibJssPath is running " + libJssPath);
+    return libJssPath;
+  }
+
+  public void setLibJssPath(String libJssPath) {
+    this.libJssPath = libJssPath;
   }
 }
